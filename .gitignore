@@ -6,3 +6,4 @@ job_searcher_env
 job_searcher_app/db.sqlite3
 commandprompt.txt
 debug.log
+.gitignore
