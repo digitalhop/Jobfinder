@@ -1,0 +1,112 @@
+{% extends 'my_jobs/layout.html' %}
+
+
+{% block content %}
+<header>
+	
+		<h1>Job Searches</h1>
+</header>
+
+<div class="row">
+    <form class="col s10" action="/job_searches/" method="POST">
+		{% csrf_token %}
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="keyword" name="keyword" type="text" class="validate" required>
+          <label for="keyword">Keyword</label>
+        </div>
+        <div class="input-field col s4">
+          <input id="location" name="location" type="text" class="validate" required>
+          <label for="location">Location</label>
+        </div>
+        <div class="input-field col s2">
+          <input id="distance" name="distance" type="number" class="validate" required>
+          <label for="distance">Distance</label>
+        </div>
+      </div>
+		<div class="switch">
+			<label>
+			Permanent
+			<input name="temp" type="checkbox">
+			<span class="lever"></span>
+			Temp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</label>
+			<label>
+			Employers
+			<input name="employer" type="checkbox">
+			<span class="lever"></span>
+			Agencies&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</label>			
+			<label>
+			<input name="reed" type="checkbox" />
+			<span>Reed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			</label>
+			<label>
+			<input name="indeed" type="checkbox" />
+			<span>Indeed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			</label>
+
+
+			<button class="btn waves-effect waves-light #33ccff" style="background-color: #b3ccff;" type="submit" name="action">Submit
+				<i class="material-icons right">send</i>
+			</button>
+	<input type="hidden" name="delete_job" value='no' />
+    </form>
+		</div>
+
+  </div>
+
+<table id="jobSearchesTable" class="table table-striped table-bordered">
+<thead>
+  <tr>
+	<th>Del</th>
+    <th>Keyword</th>
+    <th>Location</th>
+    <th>Distance</th>
+    <th>Is Permanent</th>
+    <th>Employers Only</th>
+    <th>Reed</th>
+    <th>Indeed</th>
+    <th>Update<br> Results</th>
+    
+  </tr>
+</thead>
+<tbody>
+  {% for message in messages %}
+    <tr>
+	  <td><form action="/job_searches/" method="POST">
+					{% csrf_token %}
+				<input type="hidden" name="delete_job" value='yes' />
+				<input type="hidden" name="searchnumber" value='{{ message.search_query_num }}' />
+				<button class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">-</i></button>
+				</form></td>
+      <td>{{ message.search_keywords }}</td>
+      <td>{{ message.search_location }}</td>
+      <td>{{ message.search_distance }}</td>
+      <td>{{ message.search_permanent }}</td>
+      <td>{{ message.search_employers_only }}</td>
+      <td>{{ message.search_reed }}</td>
+      <td>{{ message.search_indeed }}</td>
+      <td><form action="/job_searches/" method="POST">
+					{% csrf_token %}
+				<input type="hidden" name="delete_job" value='nope' />
+				<input type="hidden" name="searchnumber" value='{{ message.search_query_num }}' />
+				<button class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">+</i></button>
+				</form></td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+<div  style='padding-top: 25px; padding-bottom: 25px;'>
+
+<form method="POST">
+		{% csrf_token %}
+		
+		<button class="btn waves-effect waves-light #33ccff" style="background-color: #b3ccff;" type="submit" name="action">Run All Searches
+			<i class="material-icons right">send</i>
+			<input type="hidden" name="delete_job" value='fetchall' />
+		</button>
+</form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+.textLimiter {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 35ch;
+  }
+
+td.dateNotExpired {
+    background-color: #ccffcc;
+}
+
+td.dateExpired {
+    background-color: #ffcccc;
+}

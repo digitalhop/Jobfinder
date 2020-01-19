@@ -1,0 +1,8 @@
+job_searcher_app/my_jobs/indeed.py
+job_searcher_app/my_jobs/indeed
+job_searcher_app/my_jobs/linkedin.py
+job_searcher_app/my_jobs/linked_in
+job_searcher_env
+job_searcher_app/db.sqlite3
+commandprompt.txt
+debug.log

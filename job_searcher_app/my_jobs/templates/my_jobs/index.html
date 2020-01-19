@@ -1,0 +1,99 @@
+{% extends 'my_jobs/layout.html' %}
+
+{% block content %}
+<header class="container">
+		<h1>My liked jobs</h1>
+</header>
+<table id="undecidedTable" class="display order-column">
+<thead>
+  <tr>
+    <th width="150px">Status</th>
+    <th>Job Title</th>
+    <th>Employer</th>
+    <th>Location</th>
+    <th>Keyword</th>
+    <th>Min Salary</th>
+    <th>Max Salary</th>
+    <th>Expiring</th>
+    <th>Created</th>
+    <th>Short Description</th>
+  </tr>
+</thead>
+<tbody>
+  {% for message in messages %}
+    <tr>
+      <td>
+          <form action="/my_jobs/" method="POST">
+            {% csrf_token %}
+              <input type="hidden" name="choice" value='markApplied' />
+              <input type="hidden" name="jobnumber" value='{{ message.job_number }}' />
+              <button title="Mark job as applied" class="btn-floating btn-small waves-effect waves-light {{ message.applied }}"
+            style="float: left;"><i class="material-icons">email</i></button>
+          </form>
+
+
+
+          <form action="/my_jobs/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="choice" value='markAccepted' />
+            <input type="hidden" name="jobnumber" value='{{ message.job_number }}' />
+            <button title="Company want to talk" class="btn-floating  btn-small waves-effect waves-light {{ message.status }}"
+            style="float: left;"><i class="material-icons">people</i></button>
+          </form>
+
+          <form action="/my_jobs/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="choice" value='markDeclined' />
+            <input type="hidden" name="jobnumber" value='{{ message.job_number }}' />
+            <button title="Job application unsuccesful" class="btn-floating  btn-small waves-effect waves-light grey"
+            style="float: left;"><i class="medium material-icons">close</i></button>
+          </form>
+          <form action="/my_jobs/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="choice" value='yeslikejob' />
+            <input type="hidden" name="jobnumber" value='{{ message.job_number }}' />
+            <input type="hidden" name="userjobid" value='{{ message.user_job_id }}' />
+            <button title="Make job like status neutral" class="btn-floating  btn-small waves-effect waves-light {{ message.like_the_job }}"
+            style="float: left;"><i class="material-icons">thumb_up</i></button>
+          </form>
+          <form action="/my_jobs/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="choice" value='nolikejob' />
+            <input type="hidden" name="jobnumber" value='{{ message.job_number }}' />
+            <input type="hidden" name="userjobid" value='{{ message.user_job_id }}' />
+            <button title="Unlike the job" class="btn-floating  btn-small waves-effect waves-light grey"
+            style="float: left;"><i class="material-icons">thumb_down</i></button>
+          </form>
+      </td>
+      <td><a href="{{ message.reed_url }}" target="_blank">{{ message.job_title }}</a></td>
+      <td>{{ message.employer_name }}
+        <div>
+          <form action="/my_jobs/" method="POST">
+          {% csrf_token %}
+              <input type="hidden" name="choice" value='yeslikecompany' />
+              <input type="hidden" name="companyname" value='{{ message.employer_name }}' />
+              <button title="like {{ message.employer_name }}" class="btn-floating  btn-small waves-effect waves-light {{ message.like_company_class }}"
+              style="float: left;"><i class="material-icons">thumb_up</i></button>
+          </form>
+          <form action="/my_jobs/" method="POST">
+          {% csrf_token %}
+            <input type="hidden" name="choice" value='nolikecompany' />
+            <input type="hidden" name="companyname" value='{{ message.employer_name }}' />
+            <button title="Unlike {{ message.employer_name }}" class="btn-floating  btn-small waves-effect waves-light grey"
+            style="float: left;"><i class="material-icons">thumb_down</i></button>
+          </form>
+          
+        </div>
+      </td>
+      <td>{{ message.actual_location }}</td>
+      <td>{{ message.search_keyword }}</td>
+      <td>{{ message.min_salary }}</td>
+      <td>{{ message.max_salary }}</td>
+      <td class="dateNotExpired">{{ message.expires }}</td>
+      <td>{{ message.creation_date }}</td>
+      <td class="textLimiter">{{ message.short_description }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+{% endblock %}

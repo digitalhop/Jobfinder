@@ -1,0 +1,34 @@
+{% extends 'my_jobs/layout.html' %}
+
+{% block content %}
+<header class="container">
+		<h1>My undecided jobs</h1>
+</header>
+<table class="highlight">
+  <tr>
+	<th>Add</th>
+    <th>Job Title</th>
+    <th>Employer</th>
+    <th>Location</th>
+    <th>Min Salary</th>
+    <th>Max Salary</th>
+    <th>Expiring</th>
+    <th>Created</th>
+    <th>Short Description</th>
+  </tr>
+  
+  {% for message in messages %}
+    <tr>
+	  <td><a class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">+</i></a></td>
+      <td>{{ message.job_title }}</td>
+      <td>{{ message.employer_name }}</td>
+      <td>{{ message.actual_location }}</td>
+      <td>{{ message.min_salary }}</td>
+      <td>{{ message.max_salary }}</td>
+      <td>{{ message.expires }}</td>
+      <td>{{ message.creation_date }}</td>
+      <td>{{ message.short_description }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}
