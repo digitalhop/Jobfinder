@@ -7,3 +7,4 @@ job_searcher_app/db.sqlite3
 commandprompt.txt
 debug.log
 .gitignore
+job_searcher_app/my_jobs/test.py
