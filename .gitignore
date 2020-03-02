@@ -8,3 +8,5 @@ commandprompt.txt
 debug.log
 .gitignore
 job_searcher_app/my_jobs/test.py
+job_searcher_app/my_jobs/manual-salary.py
+job_searcher_app/my_jobs/manual-salary-normalisation.py
