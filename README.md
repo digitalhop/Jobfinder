@@ -82,12 +82,6 @@ PrIMARY KEY (job_id)
 
 &nbsp;
 
-&nbsp;
-
-);
-
-&nbsp;
-
 --user searches, the parameters used in a particular type of search
 
 CREATE TABLE User_searches (
