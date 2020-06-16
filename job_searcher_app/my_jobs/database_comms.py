@@ -286,6 +286,37 @@ def get_user_searches(this_user):
 							'search_indeed':sear_indeed})    
 	return messages
 
+def get_unliked_jobs(this_user):
+	#fetches the latest searches for a particular user of the jobs they have unliked oredered by latest unlike
+	cursor = conn.cursor()
+	messages = []
+	for row in cursor.execute(	"""SELECT DISTINCT TOP 10 u.user_job_id, c.job_title, c.employer_name, u.editedTime
+								FROM User_jobs AS u
+								LEFT JOIN ReedIndeedCombined AS c
+								ON c.job_id = u.user_job_id
+								WHERE u.like_the_job = 'no'
+								AND u.the_status IS NULL
+								AND u.user_id = ?
+								AND c.removed IS NULL
+								AND c.job_title IS NOT NULL
+								AND c.employer_name IS NOT NULL
+								ORDER BY u.editedTime DESC;""", this_user):
+		emp_name = row.employer_name
+		job_title = row.job_title
+		job_id = row.user_job_id
+		
+		messages.append({	'emp_name':emp_name, 
+							'job_title':job_title,
+							'job_id':job_id})    
+	return messages
+
+def undo_unlike(this_user, job_id):
+	#if a user wants to undo unliking a job on the my unliked jobs page	
+		cursor = conn.cursor()
+		cursor.execute("""UPDATE User_jobs SET like_the_job = NULL WHERE user_id =?
+						AND user_job_id =?;""",this_user, job_id)
+		conn.commit()
+
 def get_active_searches_list(this_user):
 	#creates a list of active searches
 	list_of_active_searches = []

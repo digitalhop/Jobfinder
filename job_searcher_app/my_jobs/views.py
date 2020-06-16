@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from my_jobs.database_comms import get_my_jobs, get_my_undecided_jobs, like_or_unlike_job, get_user_searches, update_job_searches, add_job_search, like_or_unlike_company, has_reed_job_been_removed, remove_user_jobs_when_user_search_removed, update_applied_status, update_feedback_status, get_active_searches_list
+from my_jobs.database_comms import get_my_jobs, get_my_undecided_jobs, like_or_unlike_job, get_user_searches, update_job_searches, add_job_search, like_or_unlike_company, has_reed_job_been_removed, remove_user_jobs_when_user_search_removed, update_applied_status, update_feedback_status, get_active_searches_list, get_unliked_jobs, undo_unlike
 from my_jobs.reed_api import fetch_search_parameters, correct_the_date, reed_job_summary, add_job_to_user_jobs, update_reed_jobs_table, reed_full_job_details
 
 # Create your views here.
@@ -162,5 +162,31 @@ def jobs_searches_view(request):
 			messages = get_user_searches(this_user)
 			context = { 'messages': messages }
 			return render(request, 'my_jobs/job_searches.html', context)
+	else:
+		return HttpResponse('not logged in')
+
+#used for seeing the jobs that a user has liked or unliked
+def jobs_unliked(request):
+	if request.user.is_authenticated:
+		#get username
+		this_user = request.user.username
+		#print(messages)
+		#check if it was a post or get request
+		if request.method == "GET":
+			#run database function
+			messages = get_unliked_jobs(this_user)
+			context = { 'messages': messages }
+		#    print(context)
+			return render(request, 'my_jobs/unliked_jobs.html', context)
+		#this post request is the undo btn for a previously unliked job
+		elif request.method == "POST":
+			#check which post request it is
+			if request.POST["choice"] == "yeslikejob":
+				#undos previously unliked marked job 
+				undo_unlike(this_user, request.POST["userjobid"])
+			#run database function
+			messages = get_unliked_jobs(this_user)
+			context = { 'messages': messages }
+			return render(request, 'my_jobs/unliked_jobs.html', context)
 	else:
 		return HttpResponse('not logged in')
