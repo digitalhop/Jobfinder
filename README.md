@@ -152,6 +152,8 @@ the_status VARCHAR(10),
 
 user_job_id VARCHAR(100),
 
+editedTime TIMESTAMP,
+
 PRIMARY KEY (job_number),
 
 CONSTRAINT FK_user_id_user_jobs FOREIGN KEY (user_id) REFERENCES Users(user_id),
