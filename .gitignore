@@ -10,3 +10,5 @@ debug.log
 job_searcher_app/my_jobs/test.py
 job_searcher_app/my_jobs/manual-salary.py
 job_searcher_app/my_jobs/manual-salary-normalisation.py
+job_searcher_app/my_jobs/__pycache__
+

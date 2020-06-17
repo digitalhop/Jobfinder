@@ -3,6 +3,7 @@ import pyodbc
 import os
 from datetime import datetime
 from django.contrib.auth.models import User
+import time
 
 #create the pyodbc connection
 conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
@@ -236,7 +237,7 @@ def like_or_unlike_company(like_or_unlike, this_user, company_name):
 	row = cursor.fetchone()
 	#if the cmpany doesn't have the like or not set
 	if not row:
-		cursor.execute("""INSERT INTO User_companies VALUES (?, ?, ?);""", this_user, company_name, like_or_unlike)
+		cursor.execute("""INSERT INTO User_companies (user_id,company_name,like_or_not)VALUES (?, ?, ?);""", this_user, company_name, like_or_unlike)
 		conn.commit()
 	#reverse like company 
 	elif row.like_or_not == 'yes' and like_or_unlike == 'yes':
@@ -290,7 +291,7 @@ def get_unliked_jobs(this_user):
 	#fetches the latest searches for a particular user of the jobs they have unliked oredered by latest unlike
 	cursor = conn.cursor()
 	messages = []
-	for row in cursor.execute(	"""SELECT DISTINCT TOP 10 u.user_job_id, c.job_title, c.employer_name, u.editedTime
+	for row in cursor.execute(	"""SELECT DISTINCT TOP 100 u.user_job_id, c.job_title, c.employer_name, u.editedTime
 								FROM User_jobs AS u
 								LEFT JOIN ReedIndeedCombined AS c
 								ON c.job_id = u.user_job_id
@@ -308,6 +309,20 @@ def get_unliked_jobs(this_user):
 		messages.append({	'emp_name':emp_name, 
 							'job_title':job_title,
 							'job_id':job_id})    
+	return messages
+
+def get_unliked_companies(this_user):
+	#fetches list of companies user has unliked, ordered by latest first
+	cursor = conn.cursor()
+	messages = []
+	for row in cursor.execute(	"""SELECT DISTINCT c.company_name, c.editedTime
+								FROM User_companies AS c
+								WHERE c.like_or_not = 'no'
+								AND c.user_id = ?
+								ORDER BY c.editedTime DESC;""", this_user):
+		com_name = row.company_name
+		
+		messages.append({'comp_name':com_name})    
 	return messages
 
 def undo_unlike(this_user, job_id):
