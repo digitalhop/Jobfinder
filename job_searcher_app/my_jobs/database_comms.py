@@ -121,13 +121,8 @@ def get_my_undecided_jobs(this_user):
 	#used for the jobs view to get all jobs that have not been decided
 	cursor = conn.cursor()
 	messages = []
-	for row in cursor.execute(	"""SELECT * FROM (	SELECT * FROM Indeed_jobs UNION ALL SELECT * FROM Reed_jobs) AS BIG
-								RIGHT JOIN User_jobs ON User_jobs.user_job_id = Big.job_id
-								LEFT JOIN User_searches ON User_searches.search_query_num = User_jobs.search_query_num
-								LEFT JOIN User_companies ON User_companies.company_name = BIG.employer_name
-								WHERE (User_jobs.user_id = ? AND User_jobs.like_the_job IS NULL)
-								AND (User_companies.like_or_not IS NULL or User_companies.like_or_not = 'yes')
-								AND (BIG.expires > GETDATE() AND BIG.removed IS NULL OR BIG.expires IS NULL);""", this_user):
+	for row in cursor.execute(	"""SELECT DISTINCT * FROM undecided
+								WHERE user_id = ?;""", this_user):
 		emp_name = row.employer_name
 		jobnumber = row.job_number
 		jobid = row.job_id
@@ -151,7 +146,7 @@ def get_my_undecided_jobs(this_user):
 		likejob = row.like_the_job
 		like_comp = row.like_or_not
 		appliedyet = row.applied
-		user_job_id = row.user_job_id
+		user_job_id = row.job_id
 
 		messages.append({	'employer_name':emp_name, 
 							'job_id':jobid,
@@ -174,6 +169,7 @@ def get_my_undecided_jobs(this_user):
 							'user_job_id':user_job_id,
 							'job_number':jobnumber})    
 	return messages
+
 
 def old_like_or_unlike_job(like_or_unlike, this_user, user_job_id):
 	'''marks a job as liked in user jobs table, if the job is already liked
@@ -448,3 +444,14 @@ def insert_linked_in_raw_data(url, html):
 	cursor = conn.cursor()
 	cursor.execute("""INSERT INTO Linkedin_raw VALUES (?, ?);""", url, html)
 	conn.commit()
+
+def retire_old_jobs(job_id):
+	#if a job has a creation date that is older than 3 months we mark it as removed
+	old_job_ids = []
+	cursor = conn.cursor()
+	for row in cursor.execute(	"""SELECT search_query_num, user_job_id, User_jobs.user_id, removed FROM User_jobs
+								INNER JOIN Reed_jobs ON Reed_jobs.job_id = User_jobs.user_job_id
+								WHERE (User_jobs.user_id = ? AND User_jobs.search_query_num = ?)
+								AND Reed_jobs.removed IS NULL;""", this_user, search_num):
+		if row:
+			previous_job_search_ids.append(row.user_job_id)
