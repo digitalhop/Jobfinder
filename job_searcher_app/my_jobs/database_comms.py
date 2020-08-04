@@ -351,7 +351,7 @@ def update_job_searches(add_or_delete, this_user, search_num):
 def add_job_search(this_user, keyword, location=None, distance=None, temp_or_perm=None, employers=None, reed=None, indeed=None, is_active=None):
 	#adds a new search query to the user database
 	cursor = conn.cursor()
-	cursor.execute("""INSERT INTO User_searches VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);""", this_user, keyword, location, distance, temp_or_perm, employers, reed, indeed, is_active)
+	cursor.execute("""INSERT INTO User_searches VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""", this_user, keyword, location, distance, temp_or_perm, employers, reed, indeed, is_active, None)
 	conn.commit()
 
 def has_reed_job_been_removed(this_user, search_num, reed_api_data):
